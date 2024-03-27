@@ -24,20 +24,20 @@ class Cell:
         self.__right_wall = Line(top_right, bottom_right)
         self.__bottom_wall = Line(bottom_left, bottom_right)
         self.__left_wall = Line(top_left, bottom_left)
-        self.top_wall = has_top_wall
-        self.right_wall = has_right_wall
-        self.bottom_wall = has_bottom_wall
-        self.left_wall = has_left_wall
+        self.has_top_wall = has_top_wall
+        self.has_right_wall = has_right_wall
+        self.has_bottom_wall = has_bottom_wall
+        self.has_left_wall = has_left_wall
 
     def draw(self) -> None:
-        if self.top_wall:
+        if self.has_top_wall:
             self.__window.draw_line(self.__top_wall, self.__wall_color)
 
-        if self.right_wall:
+        if self.has_right_wall:
             self.__window.draw_line(self.__right_wall, self.__wall_color)
 
-        if self.bottom_wall:
+        if self.has_bottom_wall:
             self.__window.draw_line(self.__bottom_wall, self.__wall_color)
 
-        if self.left_wall:
+        if self.has_left_wall:
             self.__window.draw_line(self.__left_wall, self.__wall_color)

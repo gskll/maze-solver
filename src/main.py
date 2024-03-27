@@ -81,6 +81,10 @@ def main():
     cell_all_4 = Cell(win, 25, 140, 10)
     cell_all_4.draw()
 
+    cell_all.draw_move(cell_all_2)
+    cell_all_3.draw_move(cell_all_4)
+    cell_no_left.draw_move(cell_no_right, undo=True)
+
     win.wait_for_close()
 
 
