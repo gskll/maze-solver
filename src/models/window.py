@@ -5,28 +5,28 @@ from .line import Line
 
 class Window:
     def __init__(self, height: int, width: int):
-        self.__root: Tk = Tk()
-        self.__canvas: Canvas = Canvas(
-            self.__root, height=height, width=width, bg="gray3"
+        self._root: Tk = Tk()
+        self._canvas: Canvas = Canvas(
+            self._root, height=height, width=width, bg="gray3"
         )
-        self.__running: bool = False
+        self._running: bool = False
 
-        self.__root.title("Maze Solver")
-        self.__root.protocol("WM_DELETE_WINDOW", self.close)
-        self.__canvas.pack(fill=BOTH, expand=1)
+        self._root.title("Maze Solver")
+        self._root.protocol("WM_DELETE_WINDOW", self.close)
+        self._canvas.pack(fill=BOTH, expand=1)
 
     def redraw(self):
-        self.__root.update_idletasks()
-        self.__root.update()
+        self._root.update_idletasks()
+        self._root.update()
 
     def wait_for_close(self):
-        self.__running = True
-        while self.__running:
+        self._running = True
+        while self._running:
             self.redraw()
         print("Window closed.")
 
     def close(self):
-        self.__running = False
+        self._running = False
 
     def draw_line(self, line: Line, fill_color: str):
-        line.draw(self.__canvas, fill_color)
+        line.draw(self._canvas, fill_color)
