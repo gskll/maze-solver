@@ -9,6 +9,12 @@ class Point:
     def __repr__(self):
         return f"Point(x={self.x}, y={self.y})"
 
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Point):
+            return False
+
+        return self.x == other.x and self.y == other.y
+
 
 class Line:
     def __init__(self, start: Point, end: Point) -> None:
@@ -23,3 +29,8 @@ class Line:
 
     def __repr__(self) -> str:
         return f"Line from {self.start} to {self.end}"
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Line):
+            return False
+        return self.start == other.start and self.end == other.end

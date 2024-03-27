@@ -1,17 +1,16 @@
 import time
-from src.models.cell import Cell
-from . import Window
+from . import Window, Cell
 
 
 class Maze:
     def __init__(
         self,
-        window: Window,
         x: int,
         y: int,
         num_rows: int,
         num_cols: int,
         cell_size: int,
+        window: Window | None = None,
     ) -> None:
         self._cells = []
         self._window = window
@@ -28,7 +27,7 @@ class Maze:
             row = []
             for r in range(self._num_rows):
                 x = self._x + r * self._cell_size
-                cell = Cell(self._window, x, y, self._cell_size)
+                cell = Cell(x, y, self._cell_size, window=self._window)
                 row.append(cell)
             self._cells.append(row)
 
@@ -41,5 +40,7 @@ class Maze:
         self._animate()
 
     def _animate(self):
+        if self._window is None:
+            return
         self._window.redraw()
         time.sleep(0.05)
