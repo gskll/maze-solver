@@ -12,7 +12,7 @@ class Maze:
         cell_size: int,
         window: Window | None = None,
     ) -> None:
-        self._cells = []
+        self._cells: list[list[Cell]] = []
         self._window = window
         self._x = x
         self._y = y
