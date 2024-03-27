@@ -5,9 +5,10 @@ from .line import Line
 
 class Window:
     def __init__(self, height: int, width: int):
+        self._bg_color = "gray3"
         self._root: Tk = Tk()
         self._canvas: Canvas = Canvas(
-            self._root, height=height, width=width, bg="gray3"
+            self._root, height=height, width=width, bg=self._bg_color
         )
         self._running: bool = False
 
