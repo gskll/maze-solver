@@ -7,7 +7,7 @@ class Window:
     def __init__(self, height: int, width: int):
         self.__root: Tk = Tk()
         self.__canvas: Canvas = Canvas(
-            self.__root, height=height, width=width, bg="white"
+            self.__root, height=height, width=width, bg="gray3"
         )
         self.__running: bool = False
 
