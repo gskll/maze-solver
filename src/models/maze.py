@@ -22,11 +22,11 @@ class Maze:
         self._create_cells()
 
     def _create_cells(self):
-        for c in range(self._num_cols):
-            y = self._y + c * self._cell_size
+        for r in range(self._num_rows):
+            y = self._y + r * self._cell_size
             row = []
-            for r in range(self._num_rows):
-                x = self._x + r * self._cell_size
+            for c in range(self._num_cols):
+                x = self._x + c * self._cell_size
                 cell = Cell(x, y, self._cell_size, window=self._window)
                 row.append(cell)
             self._cells.append(row)
