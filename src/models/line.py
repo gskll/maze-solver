@@ -6,6 +6,9 @@ class Point:
         self.x = x
         self.y = y
 
+    def __repr__(self):
+        return f"Point(x={self.x}, y={self.y})"
+
 
 class Line:
     def __init__(self, start: Point, end: Point) -> None:
@@ -17,3 +20,6 @@ class Line:
             self.start.x, self.end.x, self.start.y, self.end.y, fill=fill_color
         )
         canvas.pack(fill=BOTH, expand=1)
+
+    def __repr__(self) -> str:
+        return f"Line from {self.start} to {self.end}"
