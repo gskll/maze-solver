@@ -35,6 +35,8 @@ class Maze:
             for cell in row:
                 self._draw_cell(cell)
 
+        self._break_entrance_and_exit()
+
     def _draw_cell(self, cell: Cell):
         cell.draw()
         self._animate()
@@ -44,3 +46,12 @@ class Maze:
             return
         self._window.redraw()
         time.sleep(0.05)
+
+    def _break_entrance_and_exit(self):
+        entry_cell = self._cells[0][0]
+        exit_cell = self._cells[self._num_rows - 1][self._num_cols - 1]
+
+        entry_cell.has_top_wall = False
+        exit_cell.has_bottom_wall = False
+        self._draw_cell(entry_cell)
+        self._draw_cell(exit_cell)
