@@ -58,3 +58,24 @@ class TestMaze(unittest.TestCase):
 
         self.assertIsInstance(cell, Cell)
         self.assertEqual(cell._top_wall, Line(Point(0, 0), Point(10, 0)))
+
+    def test_breaks_entry_exit_cells(self):
+        num_cols = 5
+        nums_rows = 2
+        cell_size = 10
+        maze = Maze(0, 0, nums_rows, num_cols, cell_size, None)
+        entry_cell = maze._cells[0][0]
+        exit_cell = maze._cells[nums_rows - 1][num_cols - 1]
+
+        self.assertIsInstance(entry_cell, Cell)
+        self.assertIsInstance(exit_cell, Cell)
+
+        self.assertEqual(entry_cell.has_top_wall, False)
+        self.assertEqual(entry_cell.has_right_wall, True)
+        self.assertEqual(entry_cell.has_bottom_wall, True)
+        self.assertEqual(entry_cell.has_left_wall, True)
+
+        self.assertEqual(exit_cell.has_top_wall, True)
+        self.assertEqual(exit_cell.has_right_wall, True)
+        self.assertEqual(exit_cell.has_bottom_wall, False)
+        self.assertEqual(exit_cell.has_left_wall, True)
