@@ -97,7 +97,6 @@ class Maze:
                 cell.has_right_wall = False
                 next_cell.has_left_wall = False
 
-            self._draw_cell(cell)
             self._break_walls_r(next_row, next_col)
 
     def _find_possible_next_moves(self, row: int, col: int) -> list[tuple[int, int]]:
