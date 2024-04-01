@@ -8,10 +8,6 @@ class Cell:
         y: int,
         size_x: int,
         size_y: int,
-        has_top_wall: bool = True,
-        has_right_wall: bool = True,
-        has_bottom_wall: bool = True,
-        has_left_wall: bool = True,
         window: Window | None = None,
     ) -> None:
         top_left = Point(x, y)
@@ -29,10 +25,10 @@ class Cell:
         self._left_wall = Line(top_left, bottom_left)
 
         self.visited = False
-        self.has_top_wall = has_top_wall
-        self.has_right_wall = has_right_wall
-        self.has_bottom_wall = has_bottom_wall
-        self.has_left_wall = has_left_wall
+        self.has_top_wall = True
+        self.has_right_wall = True
+        self.has_bottom_wall = True
+        self.has_left_wall = True
 
     def draw(self) -> None:
         if self._window is None:

@@ -71,7 +71,6 @@ class Maze:
 
         while True:
             possible_next_moves = self._find_possible_next_moves(row, col)
-            print("possible next moves", possible_next_moves, len(possible_next_moves))
             if len(possible_next_moves) == 0:
                 self._draw_cell(cell)
                 return
@@ -102,7 +101,6 @@ class Maze:
             self._break_walls_r(next_row, next_col)
 
     def _find_possible_next_moves(self, row: int, col: int) -> list[tuple[int, int]]:
-        print(row, col, self._num_rows, self._num_cols)
         moves = []
 
         # above
@@ -118,11 +116,4 @@ class Maze:
         if col < self._num_cols - 1:
             moves.append((row, col + 1))
 
-        non_visisted = []
-        print("moves", moves)
-        for move in moves:
-            row, col = move
-            if not self._cells[row][col].visited:
-                non_visisted.append(move)
-        return non_visisted
-        # return [move for move in moves if not self._cells[move[0]][move[1]].visited]
+        return [move for move in moves if not self._cells[move[0]][move[1]].visited]
