@@ -29,6 +29,7 @@ class Maze:
         self._create_cells()
         self._break_entrance_and_exit()
         self._break_walls_r(0, 0)
+        self._reset_visited_cells()
 
     def _create_cells(self):
         for r in range(self._num_rows):
@@ -116,3 +117,8 @@ class Maze:
             moves.append((row, col + 1))
 
         return [move for move in moves if not self._cells[move[0]][move[1]].visited]
+
+    def _reset_visited_cells(self):
+        for row in self._cells:
+            for cell in row:
+                cell.visited = False

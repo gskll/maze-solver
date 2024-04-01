@@ -73,3 +73,9 @@ class TestMaze(unittest.TestCase):
         self.assertEqual(entry_cell.has_top_wall, False)
 
         self.assertEqual(exit_cell.has_bottom_wall, False)
+
+    def test_reset_visited_cells(self):
+        maze = Maze(0, 0, 10, 10, 10, 10, None)
+        cells = maze._cells
+
+        self.assertTrue(all(cell.visited == False for row in cells for cell in row))
