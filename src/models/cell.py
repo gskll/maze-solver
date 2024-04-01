@@ -6,7 +6,8 @@ class Cell:
         self,
         x: int,
         y: int,
-        size: int,
+        size_x: int,
+        size_y: int,
         has_top_wall: bool = True,
         has_right_wall: bool = True,
         has_bottom_wall: bool = True,
@@ -14,10 +15,10 @@ class Cell:
         window: Window | None = None,
     ) -> None:
         top_left = Point(x, y)
-        top_right = Point(x + size, y)
-        bottom_left = Point(x, y + size)
-        bottom_right = Point(x + size, y + size)
-        center = Point(x + size // 2, y + size // 2)
+        top_right = Point(x + size_x, y)
+        bottom_left = Point(x, y + size_y)
+        bottom_right = Point(x + size_x, y + size_y)
+        center = Point(x + size_x // 2, y + size_y // 2)
 
         self._wall_color = "green2"
         self._window = window
@@ -26,6 +27,8 @@ class Cell:
         self._right_wall = Line(top_right, bottom_right)
         self._bottom_wall = Line(bottom_left, bottom_right)
         self._left_wall = Line(top_left, bottom_left)
+
+        self.visited = False
         self.has_top_wall = has_top_wall
         self.has_right_wall = has_right_wall
         self.has_bottom_wall = has_bottom_wall
