@@ -1,4 +1,5 @@
-from src.models import Window, Maze
+from maze import Maze
+from window import Window
 
 
 def main():

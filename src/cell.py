@@ -1,4 +1,5 @@
-from . import Line, Window, Point
+from line import Line, Point
+from window import Window
 
 
 class Cell:

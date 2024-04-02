@@ -1,6 +1,7 @@
 import time
 import random
-from . import Window, Cell
+from cell import Cell
+from window import Window
 
 
 class Maze:
@@ -55,7 +56,7 @@ class Maze:
         if self._window is None:
             return
         self._window.redraw()
-        time.sleep(0.05)
+        time.sleep(0.01)
 
     def _break_entrance_and_exit(self):
         entry_cell = self._cells[0][0]
