@@ -11,6 +11,6 @@ venv/bin/activate:
 	./venv/bin/pip install -e .
 
 clean:
-	rm -r __pycache__
+	find . -type d -name "__pycache__" -exec rm -r {} +
 	rm -r venv
 .PHONY: clean
