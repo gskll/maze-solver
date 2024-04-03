@@ -25,6 +25,9 @@ class Cell:
         self._bottom_wall = Line(bottom_left, bottom_right)
         self._left_wall = Line(top_left, bottom_left)
 
+        self._top_wall_midpoint = Point(x + (size_x // 2), y)
+        self._bottom_wall_midpoint = Point(x + (size_x // 2), y + size_y)
+
         self.visited = False
         self.has_top_wall = True
         self.has_right_wall = True
@@ -65,3 +68,17 @@ class Cell:
 
         move_line = Line(self._center_point, to_cell._center_point)
         self._window.draw_line(move_line, move_line_color)
+
+    def draw_exit(self) -> None:
+        if self._window is None:
+            return
+
+        line = Line(self._center_point, self._bottom_wall_midpoint)
+        self._window.draw_line(line, self._wall_color)
+
+    def draw_entry(self) -> None:
+        if self._window is None:
+            return
+
+        line = Line(self._top_wall_midpoint, self._center_point)
+        self._window.draw_line(line, self._wall_color)

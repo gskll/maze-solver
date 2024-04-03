@@ -123,3 +123,60 @@ class Maze:
         for row in self._cells:
             for cell in row:
                 cell.visited = False
+
+    def _is_entry_cell(self, row: int, col: int) -> bool:
+        return row == 0 and col == 0
+
+    def _is_exit_cell(self, row: int, col: int) -> bool:
+        return row == self._num_rows - 1 and col == self._num_cols - 1
+
+    def solve(self) -> bool:
+        self._cells[0][0].draw_entry()
+        return self._solve_r(0, 0)
+
+    def _solve_r(self, row: int, col: int) -> bool:
+        self._animate()
+        cell = self._cells[row][col]
+
+        if self._is_exit_cell(row, col):
+            cell.draw_exit()
+            return True
+
+        cell.visited = True
+
+        if not cell.has_top_wall and not self._is_entry_cell(row, col):
+            next_cell = self._cells[row - 1][col]
+            if next_cell and not next_cell.visited:
+                cell.draw_move(next_cell)
+                right_move = self._solve_r(row - 1, col)
+                if right_move:
+                    return True
+                next_cell.draw_move(cell, undo=True)
+
+        if not cell.has_right_wall:
+            next_cell = self._cells[row][col + 1]
+            if next_cell and not next_cell.visited:
+                cell.draw_move(next_cell)
+                right_move = self._solve_r(row, col + 1)
+                if right_move:
+                    return True
+                next_cell.draw_move(cell, undo=True)
+
+        if not cell.has_bottom_wall and not self._is_exit_cell(row, col):
+            next_cell = self._cells[row + 1][col]
+            if next_cell and not next_cell.visited:
+                cell.draw_move(next_cell)
+                right_move = self._solve_r(row + 1, col)
+                if right_move:
+                    return True
+                next_cell.draw_move(cell, undo=True)
+
+        if not cell.has_left_wall:
+            next_cell = self._cells[row][col - 1]
+            if next_cell and not next_cell.visited:
+                cell.draw_move(next_cell)
+                right_move = self._solve_r(row, col - 1)
+                if right_move:
+                    return True
+
+        return False
