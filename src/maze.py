@@ -178,5 +178,6 @@ class Maze:
                 right_move = self._solve_r(row, col - 1)
                 if right_move:
                     return True
+                next_cell.draw_move(cell, undo=True)
 
         return False
