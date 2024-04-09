@@ -1,7 +1,7 @@
-import time
 import random
+from typing import Callable
 from cell import Cell
-from window import Window
+from line import Line
 
 
 class Maze:
@@ -13,14 +13,22 @@ class Maze:
         num_cols: int,
         cell_size_x: int,
         cell_size_y: int,
-        window: Window | None = None,
+        wall_color: str,
+        bg_color: str,
+        draw_callback: Callable[[Line, str], None] | None = None,
+        cell_animator: Callable | None = None,
+        path_animator: Callable | None = None,
         seed: int | None = None,
     ) -> None:
         if seed is not None:
             random.seed(seed)
 
         self._cells: list[list[Cell]] = []
-        self._window = window
+        self._draw_callback = draw_callback
+        self._cell_animator = cell_animator
+        self._path_animator = path_animator
+        self._wall_color = wall_color
+        self._bg_color = bg_color
         self._x = x
         self._y = y
         self._num_rows = num_rows
@@ -28,21 +36,33 @@ class Maze:
         self._cell_size_x = cell_size_x
         self._cell_size_y = cell_size_y
         self._create_cells()
+
+    def make_path(self):
+        self._reset_cell_walls()
         self._break_entrance_and_exit()
         self._break_walls_r(0, 0)
         self._reset_visited_cells()
 
     def _create_cells(self):
+        cells = []
         for r in range(self._num_rows):
             y = self._y + r * self._cell_size_y
             row = []
             for c in range(self._num_cols):
                 x = self._x + c * self._cell_size_x
                 cell = Cell(
-                    x, y, self._cell_size_x, self._cell_size_y, window=self._window
+                    x,
+                    y,
+                    self._cell_size_x,
+                    self._cell_size_y,
+                    self._wall_color,
+                    self._bg_color,
+                    self._draw_callback,
                 )
                 row.append(cell)
-            self._cells.append(row)
+            cells.append(row)
+
+        self._cells = cells
 
         for row in self._cells:
             for cell in row:
@@ -50,13 +70,8 @@ class Maze:
 
     def _draw_cell(self, cell: Cell):
         cell.draw()
-        self._animate()
-
-    def _animate(self):
-        if self._window is None:
-            return
-        self._window.redraw()
-        time.sleep(0.01)
+        if self._cell_animator:
+            self._cell_animator()
 
     def _break_entrance_and_exit(self):
         entry_cell = self._cells[0][0]
@@ -119,10 +134,18 @@ class Maze:
 
         return [move for move in moves if not self._cells[move[0]][move[1]].visited]
 
-    def _reset_visited_cells(self):
+    def _reset_cell_walls(self):
         for row in self._cells:
             for cell in row:
                 cell.visited = False
+
+    def _reset_visited_cells(self):
+        for row in self._cells:
+            for cell in row:
+                cell.has_top_wall = True
+                cell.has_left_wall = True
+                cell.has_right_wall = True
+                cell.has_bottom_wall = True
 
     def _is_entry_cell(self, row: int, col: int) -> bool:
         return row == 0 and col == 0
@@ -135,10 +158,14 @@ class Maze:
         return self._solve_r(0, 0)
 
     def _solve_r(self, row: int, col: int) -> bool:
-        self._animate()
+        print(row, col)
+        if self._path_animator:
+            self._path_animator()
+
         cell = self._cells[row][col]
 
         if self._is_exit_cell(row, col):
+            print("exiting")
             cell.draw_exit()
             return True
 
