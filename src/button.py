@@ -26,6 +26,7 @@ class Btn:
             disabledforeground=bg_color,
             disabledbackground=bg_color,
             highlightcolor=bg_color,
+            focuscolor="",
             height=50,
         )
         self._btn.pack(side=LEFT, padx=10, pady=10)
