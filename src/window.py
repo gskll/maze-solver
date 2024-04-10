@@ -8,7 +8,7 @@ from maze import Maze
 
 class Window:
     def __init__(self, height: int, width: int):
-        self._running: bool = False
+        self._running = False
         self._main_color = "green"
         self._bg_color = "gray3"
         self._wall_color = "green2"
@@ -23,34 +23,29 @@ class Window:
         self._canvas.pack(fill=BOTH, expand=1)
 
         self._make_buttons()
-
         self._setup_maze(height, width)
 
-    def _enable_buttons(self):
-        for btn in self._buttons.winfo_children():
-            btn.configure(state="normal")  # type: ignore
-
-    def _disable_buttons(self):
-        for btn in self._buttons.winfo_children():
-            btn.configure(state="disabled")  # type: ignore
-
     def _make_buttons(self):
-        self._buttons = Frame(self._root, bg=self._bg_color)
-        self._buttons.pack(fill=X, side=TOP, padx=10, pady=10)
-        self.new_btn = Btn(
-            self._buttons, "New Path", self._new_path, self._main_color, self._bg_color
+        self._button_frame = Frame(self._root, bg=self._bg_color)
+        self._button_frame.pack(fill=X, side=TOP, padx=10, pady=10)
+
+        Btn(
+            self._button_frame,
+            "New Path",
+            self._new_path,
+            self._main_color,
+            self._bg_color,
         )
 
         Btn(
-            self._buttons,
+            self._button_frame,
             "Solve - DFS",
-            self._solve_dfs,
+            self._dfs,
             self._main_color,
             self._bg_color,
         )
 
     def _setup_maze(self, screen_y, screen_x):
-        self._disable_buttons()
         margin = 50
         num_rows = 12
         num_cols = 16
@@ -67,20 +62,18 @@ class Window:
             self._wall_color,
             self._bg_color,
             self.draw_line,
-            self.animate,
-            self.animate,
+            cell_animator=self.animate,
+            path_animator=self.animate,
         )
         self._maze.make_path()
-        self._enable_buttons()
 
     def _new_path(self):
-        print("new path")
-        self._disable_buttons()
+        self._canvas.delete("all")
+        self.redraw()
         self._maze.make_path()
-        self._enable_buttons()
 
-    def _solve_dfs(self):
-        self._maze.solve()
+    def _dfs(self):
+        self._maze.solve_dfs()
 
     def _solve_bfs(self):
         print("solve bfs")

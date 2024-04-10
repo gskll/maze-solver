@@ -39,6 +39,7 @@ class Maze:
 
     def make_path(self):
         self._reset_cell_walls()
+        self._reset_visited_cells()
         self._break_entrance_and_exit()
         self._break_walls_r(0, 0)
         self._reset_visited_cells()
@@ -137,15 +138,15 @@ class Maze:
     def _reset_cell_walls(self):
         for row in self._cells:
             for cell in row:
-                cell.visited = False
-
-    def _reset_visited_cells(self):
-        for row in self._cells:
-            for cell in row:
                 cell.has_top_wall = True
                 cell.has_left_wall = True
                 cell.has_right_wall = True
                 cell.has_bottom_wall = True
+
+    def _reset_visited_cells(self):
+        for row in self._cells:
+            for cell in row:
+                cell.visited = False
 
     def _is_entry_cell(self, row: int, col: int) -> bool:
         return row == 0 and col == 0
@@ -153,19 +154,17 @@ class Maze:
     def _is_exit_cell(self, row: int, col: int) -> bool:
         return row == self._num_rows - 1 and col == self._num_cols - 1
 
-    def solve(self) -> bool:
+    def solve_dfs(self) -> bool:
         self._cells[0][0].draw_entry()
         return self._solve_r(0, 0)
 
     def _solve_r(self, row: int, col: int) -> bool:
-        print(row, col)
         if self._path_animator:
             self._path_animator()
 
         cell = self._cells[row][col]
 
         if self._is_exit_cell(row, col):
-            print("exiting")
             cell.draw_exit()
             return True
 

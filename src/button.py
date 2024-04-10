@@ -3,7 +3,7 @@ from typing import Callable
 from tkmacosx import Button
 
 
-class Btn:
+class Btn(Frame):
     def __init__(
         self,
         frame: Frame,
@@ -12,6 +12,7 @@ class Btn:
         main_color: str,
         bg_color: str,
     ):
+        super().__init__()
         helv16 = font.Font(family="Helvetica", size=16, weight=font.BOLD)
         self._btn = Button(
             frame,
