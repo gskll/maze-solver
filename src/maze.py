@@ -174,7 +174,7 @@ class Maze:
             next_cell = self._cells[row - 1][col]
             if next_cell and not next_cell.visited:
                 cell.draw_move(next_cell)
-                right_move = self._solve_r(row - 1, col)
+                right_move = self._solve_dfs_r(row - 1, col)
                 if right_move:
                     return True
                 next_cell.draw_move(cell, undo=True)
@@ -183,7 +183,7 @@ class Maze:
             next_cell = self._cells[row][col + 1]
             if next_cell and not next_cell.visited:
                 cell.draw_move(next_cell)
-                right_move = self._solve_r(row, col + 1)
+                right_move = self._solve_dfs_r(row, col + 1)
                 if right_move:
                     return True
                 next_cell.draw_move(cell, undo=True)
@@ -192,7 +192,7 @@ class Maze:
             next_cell = self._cells[row + 1][col]
             if next_cell and not next_cell.visited:
                 cell.draw_move(next_cell)
-                right_move = self._solve_r(row + 1, col)
+                right_move = self._solve_dfs_r(row + 1, col)
                 if right_move:
                     return True
                 next_cell.draw_move(cell, undo=True)
@@ -201,7 +201,7 @@ class Maze:
             next_cell = self._cells[row][col - 1]
             if next_cell and not next_cell.visited:
                 cell.draw_move(next_cell)
-                right_move = self._solve_r(row, col - 1)
+                right_move = self._solve_dfs_r(row, col - 1)
                 if right_move:
                     return True
                 next_cell.draw_move(cell, undo=True)
