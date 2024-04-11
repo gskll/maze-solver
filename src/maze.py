@@ -207,3 +207,71 @@ class Maze:
                 next_cell.draw_move(cell, undo=True)
 
         return False
+
+    def solve_bfs(self) -> bool:
+        self._cells[0][0].draw_entry(undo=True)
+        to_visit: list[tuple[int, int]] = [(0, 0)]
+        came_from: dict[tuple[int, int], tuple[int, int] | None] = {(0, 0): None}
+
+        while len(to_visit) != 0:
+            row, col = to_visit.pop(0)
+            if self._path_animator:
+                self._path_animator()
+
+            cell = self._cells[row][col]
+            if self._is_exit_cell(row, col):
+                cell.draw_exit()
+                self._retrace_path(came_from, row, col)
+                return True
+
+            cell.visited = True
+
+            if not cell.has_top_wall and not self._is_entry_cell(row, col):
+                next_cell = self._cells[row - 1][col]
+                if next_cell and not next_cell.visited:
+                    cell.draw_move(next_cell, undo=True)
+                    to_visit.append((row - 1, col))
+                    came_from[(row - 1, col)] = (row, col)
+
+            if not cell.has_right_wall:
+                next_cell = self._cells[row][col + 1]
+                if next_cell and not next_cell.visited:
+                    cell.draw_move(next_cell, undo=True)
+                    to_visit.append((row, col + 1))
+                    came_from[(row, col + 1)] = (row, col)
+
+            if not cell.has_bottom_wall and not self._is_exit_cell(row, col):
+                next_cell = self._cells[row + 1][col]
+                if next_cell and not next_cell.visited:
+                    cell.draw_move(next_cell, undo=True)
+                    to_visit.append((row + 1, col))
+                    came_from[(row + 1, col)] = (row, col)
+
+            if not cell.has_left_wall:
+                next_cell = self._cells[row][col - 1]
+                if next_cell and not next_cell.visited:
+                    cell.draw_move(next_cell, undo=True)
+                    to_visit.append((row, col - 1))
+                    came_from[(row, col - 1)] = (row, col)
+
+        return False
+
+    def _retrace_path(
+        self,
+        came_from: dict[tuple[int, int], tuple[int, int] | None],
+        row: int,
+        col: int,
+    ):
+        curr = (row, col)
+
+        while curr in came_from:
+            curr_cell = self._cells[curr[0]][curr[1]]
+            prev = came_from[curr]
+            if not prev:
+                break
+            prev_cell = self._cells[prev[0]][prev[1]]
+
+            curr_cell.draw_move(prev_cell)
+            curr = prev
+
+        self._cells[curr[0]][curr[1]].draw_entry()
