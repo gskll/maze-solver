@@ -70,6 +70,11 @@ class Window:
         time.sleep(0.01)
 
     @lock
+    def _reset_maze(self):
+        print("resetting maze")
+        self._reset_maze_path()
+
+    @lock
     def _solve_dfs(self):
         print("solving dfs")
         self._reset_maze_path()
@@ -124,7 +129,7 @@ class Window:
 
         Btn(
             self._button_frame,
-            "New Path",
+            "New",
             self._new_path,
             COLOR_CONFIG["main"],
             COLOR_CONFIG["bg"],
@@ -142,6 +147,14 @@ class Window:
             self._button_frame,
             "Solve - BFS",
             self._solve_bfs,
+            COLOR_CONFIG["main"],
+            COLOR_CONFIG["bg"],
+        )
+
+        Btn(
+            self._button_frame,
+            "Reset",
+            self._reset_maze,
             COLOR_CONFIG["main"],
             COLOR_CONFIG["bg"],
         )
