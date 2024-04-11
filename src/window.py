@@ -69,8 +69,10 @@ class Window:
         print("solving dfs")
         self._maze.solve_dfs()
 
+    @lock
     def _solve_bfs(self):
         print("solving bfs")
+        self._maze.solve_bfs()
 
     @lock
     def _new_path(self):
@@ -119,6 +121,14 @@ class Window:
             self._button_frame,
             "Solve - DFS",
             self._solve_dfs,
+            self._main_color,
+            self._bg_color,
+        )
+
+        Btn(
+            self._button_frame,
+            "Solve - BFS",
+            self._solve_bfs,
             self._main_color,
             self._bg_color,
         )
