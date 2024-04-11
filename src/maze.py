@@ -42,6 +42,16 @@ class Maze:
         self._break_walls_r(0, 0)
         self._reset_visited_cells()
 
+    def get_cell_layout(self):
+        return self._cells
+
+    def set_maze_cells(self, cells):
+        self._cells = cells
+        self._reset_visited_cells()
+        for row in self._cells:
+            for cell in row:
+                self._draw_cell(cell, should_animate=False)
+
     def _create_cells(self):
         cells = []
         for r in range(self._num_rows):
@@ -66,9 +76,9 @@ class Maze:
             for cell in row:
                 self._draw_cell(cell)
 
-    def _draw_cell(self, cell: Cell):
+    def _draw_cell(self, cell: Cell, should_animate=True):
         cell.draw()
-        if self._cell_animator:
+        if self._cell_animator and should_animate:
             self._cell_animator()
 
     def _break_entrance_and_exit(self):

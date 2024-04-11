@@ -72,11 +72,13 @@ class Window:
     @lock
     def _solve_dfs(self):
         print("solving dfs")
+        self._reset_maze_path()
         self._maze.solve_dfs()
 
     @lock
     def _solve_bfs(self):
         print("solving bfs")
+        self._reset_maze_path()
         self._maze.solve_bfs()
 
     @lock
@@ -86,6 +88,8 @@ class Window:
         self.redraw()
         self._maze.make_path()
 
+    # TODO: make the rows/cols configurable - max values
+    # will need to make the break walls and solving not-recursive or stack is exceeded
     @lock
     def _setup_maze(self, screen_y, screen_x):
         print("setting up maze")
@@ -108,6 +112,11 @@ class Window:
             path_animator=self.animate,
         )
         self._maze.make_path()
+
+    def _reset_maze_path(self):
+        cells = self._maze.get_cell_layout()
+        self._canvas.delete("all")
+        self._maze.set_maze_cells(cells)
 
     def _make_buttons(self):
         self._button_frame = Frame(self._root, bg=COLOR_CONFIG["bg"])
