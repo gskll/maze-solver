@@ -5,6 +5,14 @@ from button import Btn
 from line import Line
 from maze import Maze
 
+COLOR_CONFIG = {
+    "path": "purple2",
+    "wall": "green2",
+    "bg": "gray3",
+    "main": "green",
+    "err": "red",
+}
+
 
 def lock(func):
     def wrapper(self, *args, **kwargs):
@@ -28,16 +36,13 @@ class Window:
     def __init__(self, height: int, width: int):
         self._is_working = False
         self._running = False
-        self._main_color = "green"
-        self._bg_color = "gray3"
-        self._wall_color = "green2"
 
         self._root: Tk = Tk()
         self._root.title("Maze Solver")
         self._root.protocol("WM_DELETE_WINDOW", self.close)
 
         self._canvas: Canvas = Canvas(
-            self._root, height=height, width=width, bg=self._bg_color
+            self._root, height=height, width=width, bg=COLOR_CONFIG["bg"]
         )
         self._canvas.pack(fill=BOTH, expand=1)
 
@@ -97,38 +102,37 @@ class Window:
             num_cols,
             cell_size_x,
             cell_size_y,
-            self._wall_color,
-            self._bg_color,
-            self.draw_line,
-            cell_animator=self.animate,
+            color_config=COLOR_CONFIG,
+            draw_callback=self.draw_line,
+            # cell_animator=self.animate,
             path_animator=self.animate,
         )
         self._maze.make_path()
 
     def _make_buttons(self):
-        self._button_frame = Frame(self._root, bg=self._bg_color)
+        self._button_frame = Frame(self._root, bg=COLOR_CONFIG["bg"])
         self._button_frame.pack(fill=X, side=TOP, padx=10, pady=10)
 
         Btn(
             self._button_frame,
             "New Path",
             self._new_path,
-            self._main_color,
-            self._bg_color,
+            COLOR_CONFIG["main"],
+            COLOR_CONFIG["bg"],
         )
 
         Btn(
             self._button_frame,
             "Solve - DFS",
             self._solve_dfs,
-            self._main_color,
-            self._bg_color,
+            COLOR_CONFIG["main"],
+            COLOR_CONFIG["bg"],
         )
 
         Btn(
             self._button_frame,
             "Solve - BFS",
             self._solve_bfs,
-            self._main_color,
-            self._bg_color,
+            COLOR_CONFIG["main"],
+            COLOR_CONFIG["bg"],
         )

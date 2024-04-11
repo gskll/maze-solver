@@ -13,8 +13,7 @@ class Maze:
         num_cols: int,
         cell_size_x: int,
         cell_size_y: int,
-        wall_color: str,
-        bg_color: str,
+        color_config: dict[str, str],
         draw_callback: Callable[[Line, str], None] | None = None,
         cell_animator: Callable | None = None,
         path_animator: Callable | None = None,
@@ -27,8 +26,7 @@ class Maze:
         self._draw_callback = draw_callback
         self._cell_animator = cell_animator
         self._path_animator = path_animator
-        self._wall_color = wall_color
-        self._bg_color = bg_color
+        self._colors = color_config
         self._x = x
         self._y = y
         self._num_rows = num_rows
@@ -56,8 +54,7 @@ class Maze:
                     y,
                     self._cell_size_x,
                     self._cell_size_y,
-                    self._wall_color,
-                    self._bg_color,
+                    self._colors,
                     self._draw_callback,
                 )
                 row.append(cell)
