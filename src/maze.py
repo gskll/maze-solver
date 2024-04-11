@@ -156,9 +156,9 @@ class Maze:
 
     def solve_dfs(self) -> bool:
         self._cells[0][0].draw_entry()
-        return self._solve_r(0, 0)
+        return self._solve_dfs_r(0, 0)
 
-    def _solve_r(self, row: int, col: int) -> bool:
+    def _solve_dfs_r(self, row: int, col: int) -> bool:
         if self._path_animator:
             self._path_animator()
 
