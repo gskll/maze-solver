@@ -41,6 +41,9 @@ class Window:
         self._root.title("Maze Solver")
         self._root.protocol("WM_DELETE_WINDOW", self.close)
 
+        self._animate_cells = False
+        self._animate_path = False
+
         self._canvas: Canvas = Canvas(
             self._root, height=height, width=width, bg=COLOR_CONFIG["bg"]
         )
@@ -78,20 +81,20 @@ class Window:
     def _solve_dfs(self):
         print("solving dfs")
         self._reset_maze_path()
-        self._maze.solve_dfs()
+        self._maze.solve_dfs(self._animate_path)
 
     @lock
     def _solve_bfs(self):
         print("solving bfs")
         self._reset_maze_path()
-        self._maze.solve_bfs()
+        self._maze.solve_bfs(self._animate_path)
 
     @lock
     def _new_path(self):
         print("new maze path")
         self._canvas.delete("all")
         self.redraw()
-        self._maze.make_path()
+        self._maze.make_path(self._animate_cells)
 
     # TODO: make the rows/cols configurable - max values
     # will need to make the break walls and solving not-recursive or stack is exceeded
@@ -113,15 +116,15 @@ class Window:
             cell_size_y,
             color_config=COLOR_CONFIG,
             draw_callback=self.draw_line,
-            # cell_animator=self.animate,
+            cell_animator=self.animate,
             path_animator=self.animate,
         )
-        self._maze.make_path()
+        self._maze.make_path(self._animate_cells)
 
     def _reset_maze_path(self):
         cells = self._maze.get_cell_layout()
         self._canvas.delete("all")
-        self._maze.set_maze_cells(cells)
+        self._maze.set_maze_cells(cells, animate_cells=False)
 
     def _make_buttons(self):
         self._button_frame = Frame(self._root, bg=COLOR_CONFIG["bg"])
@@ -158,3 +161,35 @@ class Window:
             COLOR_CONFIG["main"],
             COLOR_CONFIG["bg"],
         )
+
+        self._animate_cells_btn = Btn(
+            self._button_frame,
+            "Draw Cells?",
+            self._handle_animate_cells,
+            COLOR_CONFIG["main"],
+            COLOR_CONFIG["bg"],
+        )
+
+        self._animate_path_btn = Btn(
+            self._button_frame,
+            "Draw Path?",
+            self._handle_animate_path,
+            COLOR_CONFIG["main"],
+            COLOR_CONFIG["bg"],
+        )
+
+    def _handle_animate_path(self):
+        if self._animate_path:
+            self._animate_path = False
+            self._animate_path_btn.toggle_normal()
+        else:
+            self._animate_path = True
+            self._animate_path_btn.toggle_active()
+
+    def _handle_animate_cells(self):
+        if self._animate_cells:
+            self._animate_cells = False
+            self._animate_cells_btn.toggle_normal()
+        else:
+            self._animate_cells = True
+            self._animate_cells_btn.toggle_active()
