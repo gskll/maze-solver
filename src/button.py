@@ -1,4 +1,4 @@
-from tkinter import Frame, font, LEFT
+from tkinter import ACTIVE, Frame, font, LEFT, NORMAL
 from typing import Callable
 from tkmacosx import Button
 
@@ -13,6 +13,8 @@ class Btn(Frame):
         bg_color: str,
     ):
         super().__init__()
+        self._main = main_color
+        self._bg = bg_color
         helv16 = font.Font(family="Helvetica", size=16, weight=font.BOLD)
         self._btn = Button(
             frame,
@@ -31,3 +33,9 @@ class Btn(Frame):
             height=50,
         )
         self._btn.pack(side=LEFT, padx=10, pady=10)
+
+    def toggle_normal(self):
+        self._btn.configure(state=NORMAL)  # type:ignore
+
+    def toggle_active(self):
+        self._btn.configure(state=ACTIVE)  # type:ignore
