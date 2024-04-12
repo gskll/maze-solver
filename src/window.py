@@ -41,8 +41,8 @@ class Window:
         self._root.title("Maze Solver")
         self._root.protocol("WM_DELETE_WINDOW", self.close)
 
-        self._animate_cells = False
-        self._animate_path = False
+        self._animate_cells = True
+        self._animate_path = True
 
         self._canvas: Canvas = Canvas(
             self._root, height=height, width=width, bg=COLOR_CONFIG["bg"]
@@ -118,6 +118,8 @@ class Window:
             draw_callback=self.draw_line,
             cell_animator=self.animate,
             path_animator=self.animate,
+            animate_cells=self._animate_cells,
+            animate_path=self._animate_path,
         )
         self._maze.make_path(self._animate_cells)
 
@@ -169,6 +171,8 @@ class Window:
             COLOR_CONFIG["main"],
             COLOR_CONFIG["bg"],
         )
+        if self._animate_cells:
+            self._animate_cells_btn.toggle_active()
 
         self._animate_path_btn = Btn(
             self._button_frame,
@@ -177,6 +181,8 @@ class Window:
             COLOR_CONFIG["main"],
             COLOR_CONFIG["bg"],
         )
+        if self._animate_path:
+            self._animate_path_btn.toggle_active()
 
     def _handle_animate_path(self):
         if self._animate_path:
