@@ -1,5 +1,5 @@
+from typing import Callable
 from line import Line, Point
-from window import Window
 
 
 class Cell:
@@ -9,7 +9,8 @@ class Cell:
         y: int,
         size_x: int,
         size_y: int,
-        window: Window | None = None,
+        colors: dict[str, str],
+        draw_callback: Callable[[Line, str], None] | None = None,
     ) -> None:
         top_left = Point(x, y)
         top_right = Point(x + size_x, y)
@@ -17,8 +18,8 @@ class Cell:
         bottom_right = Point(x + size_x, y + size_y)
         center = Point(x + size_x // 2, y + size_y // 2)
 
-        self._wall_color = "green2"
-        self._window = window
+        self._colors = colors
+        self._draw_callback = draw_callback
         self._center_point = center
         self._top_wall = Line(top_left, top_right)
         self._right_wall = Line(top_right, bottom_right)
@@ -35,50 +36,53 @@ class Cell:
         self.has_left_wall = True
 
     def draw(self) -> None:
-        if self._window is None:
+        if self._draw_callback is None:
             return
 
         if self.has_top_wall:
-            self._window.draw_line(self._top_wall, self._wall_color)
+            self._draw_callback(self._top_wall, self._colors["wall"])
         else:
-            self._window.draw_line(self._top_wall, self._window._bg_color)
+            self._draw_callback(self._top_wall, self._colors["bg"])
 
         if self.has_right_wall:
-            self._window.draw_line(self._right_wall, self._wall_color)
+            self._draw_callback(self._right_wall, self._colors["wall"])
         else:
-            self._window.draw_line(self._right_wall, self._window._bg_color)
+            self._draw_callback(self._right_wall, self._colors["bg"])
 
         if self.has_bottom_wall:
-            self._window.draw_line(self._bottom_wall, self._wall_color)
+            self._draw_callback(self._bottom_wall, self._colors["wall"])
         else:
-            self._window.draw_line(self._bottom_wall, self._window._bg_color)
+            self._draw_callback(self._bottom_wall, self._colors["bg"])
 
         if self.has_left_wall:
-            self._window.draw_line(self._left_wall, self._wall_color)
+            self._draw_callback(self._left_wall, self._colors["wall"])
         else:
-            self._window.draw_line(self._left_wall, self._window._bg_color)
+            self._draw_callback(self._left_wall, self._colors["bg"])
 
     def draw_move(self, to_cell: "Cell", undo=False) -> None:
-        if self._window is None:
+        if self._draw_callback is None:
             return
 
-        move_line_color = self._wall_color
+        move_line_color = self._colors["path"]
         if undo:
-            move_line_color = "red"
+            move_line_color = self._colors["err"]
 
         move_line = Line(self._center_point, to_cell._center_point)
-        self._window.draw_line(move_line, move_line_color)
+        self._draw_callback(move_line, move_line_color)
 
     def draw_exit(self) -> None:
-        if self._window is None:
+        if self._draw_callback is None:
             return
 
         line = Line(self._center_point, self._bottom_wall_midpoint)
-        self._window.draw_line(line, self._wall_color)
+        self._draw_callback(line, self._colors["path"])
 
-    def draw_entry(self) -> None:
-        if self._window is None:
+    def draw_entry(self, undo=False) -> None:
+        if self._draw_callback is None:
             return
+        move_color = self._colors["path"]
+        if undo:
+            move_color = self._colors["err"]
 
         line = Line(self._top_wall_midpoint, self._center_point)
-        self._window.draw_line(line, self._wall_color)
+        self._draw_callback(line, move_color)

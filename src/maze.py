@@ -1,7 +1,7 @@
-import time
 import random
+from typing import Callable
 from cell import Cell
-from window import Window
+from line import Line
 
 
 class Maze:
@@ -13,14 +13,24 @@ class Maze:
         num_cols: int,
         cell_size_x: int,
         cell_size_y: int,
-        window: Window | None = None,
+        color_config: dict[str, str],
+        draw_callback: Callable[[Line, str], None] | None = None,
+        cell_animator: Callable | None = None,
+        path_animator: Callable | None = None,
+        animate_cells: bool = False,
+        animate_path: bool = True,
         seed: int | None = None,
     ) -> None:
         if seed is not None:
             random.seed(seed)
 
+        self._animate_cells = animate_cells
+        self._animate_path = animate_path
         self._cells: list[list[Cell]] = []
-        self._window = window
+        self._draw_callback = draw_callback
+        self._cell_animator = cell_animator
+        self._path_animator = path_animator
+        self._colors = color_config
         self._x = x
         self._y = y
         self._num_rows = num_rows
@@ -28,35 +38,54 @@ class Maze:
         self._cell_size_x = cell_size_x
         self._cell_size_y = cell_size_y
         self._create_cells()
+
+    def make_path(self, animate_cells: bool):
+        self._animate_cells = animate_cells
+        self._reset_cell_walls()
+        self._reset_visited_cells()
         self._break_entrance_and_exit()
         self._break_walls_r(0, 0)
         self._reset_visited_cells()
 
+    def get_cell_layout(self):
+        return self._cells
+
+    def set_maze_cells(self, cells: list[list[Cell]], animate_cells: bool):
+        self._animate_cells = animate_cells
+        self._cells = cells
+        self._reset_visited_cells()
+        for row in self._cells:
+            for cell in row:
+                self._draw_cell(cell)
+
     def _create_cells(self):
+        cells = []
         for r in range(self._num_rows):
             y = self._y + r * self._cell_size_y
             row = []
             for c in range(self._num_cols):
                 x = self._x + c * self._cell_size_x
                 cell = Cell(
-                    x, y, self._cell_size_x, self._cell_size_y, window=self._window
+                    x,
+                    y,
+                    self._cell_size_x,
+                    self._cell_size_y,
+                    self._colors,
+                    self._draw_callback,
                 )
                 row.append(cell)
-            self._cells.append(row)
+            cells.append(row)
+
+        self._cells = cells
 
         for row in self._cells:
             for cell in row:
                 self._draw_cell(cell)
 
-    def _draw_cell(self, cell: Cell):
+    def _draw_cell(self, cell: Cell, animate=True):
         cell.draw()
-        self._animate()
-
-    def _animate(self):
-        if self._window is None:
-            return
-        self._window.redraw()
-        time.sleep(0.01)
+        if self._cell_animator and self._animate_cells and animate:
+            self._cell_animator()
 
     def _break_entrance_and_exit(self):
         entry_cell = self._cells[0][0]
@@ -119,6 +148,15 @@ class Maze:
 
         return [move for move in moves if not self._cells[move[0]][move[1]].visited]
 
+    def _reset_cell_walls(self):
+        for row in self._cells:
+            for cell in row:
+                cell.has_top_wall = True
+                cell.has_left_wall = True
+                cell.has_right_wall = True
+                cell.has_bottom_wall = True
+                self._draw_cell(cell, False)
+
     def _reset_visited_cells(self):
         for row in self._cells:
             for cell in row:
@@ -130,12 +168,15 @@ class Maze:
     def _is_exit_cell(self, row: int, col: int) -> bool:
         return row == self._num_rows - 1 and col == self._num_cols - 1
 
-    def solve(self) -> bool:
+    def solve_dfs(self, animate_path: bool) -> bool:
+        self._animate_path = animate_path
         self._cells[0][0].draw_entry()
-        return self._solve_r(0, 0)
+        return self._solve_dfs_r(0, 0)
 
-    def _solve_r(self, row: int, col: int) -> bool:
-        self._animate()
+    def _solve_dfs_r(self, row: int, col: int) -> bool:
+        if self._path_animator and self._animate_path:
+            self._path_animator()
+
         cell = self._cells[row][col]
 
         if self._is_exit_cell(row, col):
@@ -148,7 +189,7 @@ class Maze:
             next_cell = self._cells[row - 1][col]
             if next_cell and not next_cell.visited:
                 cell.draw_move(next_cell)
-                right_move = self._solve_r(row - 1, col)
+                right_move = self._solve_dfs_r(row - 1, col)
                 if right_move:
                     return True
                 next_cell.draw_move(cell, undo=True)
@@ -157,7 +198,7 @@ class Maze:
             next_cell = self._cells[row][col + 1]
             if next_cell and not next_cell.visited:
                 cell.draw_move(next_cell)
-                right_move = self._solve_r(row, col + 1)
+                right_move = self._solve_dfs_r(row, col + 1)
                 if right_move:
                     return True
                 next_cell.draw_move(cell, undo=True)
@@ -166,7 +207,7 @@ class Maze:
             next_cell = self._cells[row + 1][col]
             if next_cell and not next_cell.visited:
                 cell.draw_move(next_cell)
-                right_move = self._solve_r(row + 1, col)
+                right_move = self._solve_dfs_r(row + 1, col)
                 if right_move:
                     return True
                 next_cell.draw_move(cell, undo=True)
@@ -175,9 +216,79 @@ class Maze:
             next_cell = self._cells[row][col - 1]
             if next_cell and not next_cell.visited:
                 cell.draw_move(next_cell)
-                right_move = self._solve_r(row, col - 1)
+                right_move = self._solve_dfs_r(row, col - 1)
                 if right_move:
                     return True
                 next_cell.draw_move(cell, undo=True)
 
         return False
+
+    def solve_bfs(self, animate_path: bool) -> bool:
+        self._animate_path = animate_path
+
+        self._cells[0][0].draw_entry(undo=True)
+        to_visit: list[tuple[int, int]] = [(0, 0)]
+        came_from: dict[tuple[int, int], tuple[int, int] | None] = {(0, 0): None}
+
+        while len(to_visit) != 0:
+            row, col = to_visit.pop(0)
+            if self._path_animator and self._animate_path:
+                self._path_animator()
+
+            cell = self._cells[row][col]
+            if self._is_exit_cell(row, col):
+                cell.draw_exit()
+                self._retrace_path(came_from, row, col)
+                return True
+
+            cell.visited = True
+
+            if not cell.has_top_wall and not self._is_entry_cell(row, col):
+                next_cell = self._cells[row - 1][col]
+                if next_cell and not next_cell.visited:
+                    cell.draw_move(next_cell, undo=True)
+                    to_visit.append((row - 1, col))
+                    came_from[(row - 1, col)] = (row, col)
+
+            if not cell.has_right_wall:
+                next_cell = self._cells[row][col + 1]
+                if next_cell and not next_cell.visited:
+                    cell.draw_move(next_cell, undo=True)
+                    to_visit.append((row, col + 1))
+                    came_from[(row, col + 1)] = (row, col)
+
+            if not cell.has_bottom_wall and not self._is_exit_cell(row, col):
+                next_cell = self._cells[row + 1][col]
+                if next_cell and not next_cell.visited:
+                    cell.draw_move(next_cell, undo=True)
+                    to_visit.append((row + 1, col))
+                    came_from[(row + 1, col)] = (row, col)
+
+            if not cell.has_left_wall:
+                next_cell = self._cells[row][col - 1]
+                if next_cell and not next_cell.visited:
+                    cell.draw_move(next_cell, undo=True)
+                    to_visit.append((row, col - 1))
+                    came_from[(row, col - 1)] = (row, col)
+
+        return False
+
+    def _retrace_path(
+        self,
+        came_from: dict[tuple[int, int], tuple[int, int] | None],
+        row: int,
+        col: int,
+    ):
+        curr = (row, col)
+
+        while curr in came_from:
+            curr_cell = self._cells[curr[0]][curr[1]]
+            prev = came_from[curr]
+            if not prev:
+                break
+            prev_cell = self._cells[prev[0]][prev[1]]
+
+            curr_cell.draw_move(prev_cell)
+            curr = prev
+
+        self._cells[curr[0]][curr[1]].draw_entry()
