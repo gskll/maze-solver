@@ -17,11 +17,15 @@ class Maze:
         draw_callback: Callable[[Line, str], None] | None = None,
         cell_animator: Callable | None = None,
         path_animator: Callable | None = None,
+        animate_cells: bool = False,
+        animate_path: bool = True,
         seed: int | None = None,
     ) -> None:
         if seed is not None:
             random.seed(seed)
 
+        self._animate_cells = animate_cells
+        self._animate_path = animate_path
         self._cells: list[list[Cell]] = []
         self._draw_callback = draw_callback
         self._cell_animator = cell_animator
@@ -35,7 +39,8 @@ class Maze:
         self._cell_size_y = cell_size_y
         self._create_cells()
 
-    def make_path(self):
+    def make_path(self, animate_cells: bool):
+        self._animate_cells = animate_cells
         self._reset_cell_walls()
         self._reset_visited_cells()
         self._break_entrance_and_exit()
@@ -45,12 +50,13 @@ class Maze:
     def get_cell_layout(self):
         return self._cells
 
-    def set_maze_cells(self, cells):
+    def set_maze_cells(self, cells: list[list[Cell]], animate_cells: bool):
+        self._animate_cells = animate_cells
         self._cells = cells
         self._reset_visited_cells()
         for row in self._cells:
             for cell in row:
-                self._draw_cell(cell, should_animate=False)
+                self._draw_cell(cell)
 
     def _create_cells(self):
         cells = []
@@ -76,9 +82,9 @@ class Maze:
             for cell in row:
                 self._draw_cell(cell)
 
-    def _draw_cell(self, cell: Cell, should_animate=True):
+    def _draw_cell(self, cell: Cell):
         cell.draw()
-        if self._cell_animator and should_animate:
+        if self._cell_animator and self._animate_cells:
             self._cell_animator()
 
     def _break_entrance_and_exit(self):
@@ -161,12 +167,13 @@ class Maze:
     def _is_exit_cell(self, row: int, col: int) -> bool:
         return row == self._num_rows - 1 and col == self._num_cols - 1
 
-    def solve_dfs(self) -> bool:
+    def solve_dfs(self, animate_path: bool) -> bool:
+        self._animate_path = animate_path
         self._cells[0][0].draw_entry()
         return self._solve_dfs_r(0, 0)
 
     def _solve_dfs_r(self, row: int, col: int) -> bool:
-        if self._path_animator:
+        if self._path_animator and self._animate_path:
             self._path_animator()
 
         cell = self._cells[row][col]
@@ -215,14 +222,16 @@ class Maze:
 
         return False
 
-    def solve_bfs(self) -> bool:
+    def solve_bfs(self, animate_path: bool) -> bool:
+        self._animate_path = animate_path
+
         self._cells[0][0].draw_entry(undo=True)
         to_visit: list[tuple[int, int]] = [(0, 0)]
         came_from: dict[tuple[int, int], tuple[int, int] | None] = {(0, 0): None}
 
         while len(to_visit) != 0:
             row, col = to_visit.pop(0)
-            if self._path_animator:
+            if self._path_animator and self._animate_path:
                 self._path_animator()
 
             cell = self._cells[row][col]
