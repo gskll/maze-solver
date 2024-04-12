@@ -82,9 +82,9 @@ class Maze:
             for cell in row:
                 self._draw_cell(cell)
 
-    def _draw_cell(self, cell: Cell):
+    def _draw_cell(self, cell: Cell, animate=True):
         cell.draw()
-        if self._cell_animator and self._animate_cells:
+        if self._cell_animator and self._animate_cells and animate:
             self._cell_animator()
 
     def _break_entrance_and_exit(self):
@@ -155,6 +155,7 @@ class Maze:
                 cell.has_left_wall = True
                 cell.has_right_wall = True
                 cell.has_bottom_wall = True
+                self._draw_cell(cell, False)
 
     def _reset_visited_cells(self):
         for row in self._cells:
