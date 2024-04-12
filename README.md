@@ -1,12 +1,7 @@
-___  ___             ___  ___                _             
-|  \/  |             |  \/  |               | |            
-| .  . | __ _ _______| .  . | __ _  ___  ___| |_ _ __ ___  
-| |\/| |/ _` |_  / _ \ |\/| |/ _` |/ _ \/ __| __| '__/ _ \ 
-| |  | | (_| |/ /  __/ |  | | (_| |  __/\__ \ |_| | | (_) |
-\_|  |_/\__,_/___\___\_|  |_/\__,_|\___||___/\__|_|  \___/ 
-                                                           
-                                                           
-# MazeMaestro - tkinter maze solver and visualizer
+![./images/logo.png](Maze maestro logo)
+![./images/app.png](Maze maestro app screenshot)
+
+## Maze Maestro - tkinter maze solver and visualizer
 
 - improvements:
 - resize grid functionality
