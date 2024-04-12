@@ -1,5 +1,5 @@
-![./images/logo.png](Maze maestro logo)
-![./images/app.png](Maze maestro app screenshot)
+![Maze maestro logo](./images/logo.png)
+![Maze maestro app screenshot](./images/app.png)
 
 ## Maze Maestro - tkinter maze solver and visualizer
 
